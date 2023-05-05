@@ -8,7 +8,7 @@ import { useFetchTaskData } from './useFetchTaskData'
 
 const useTaskBoard = () => {
   const dispatch = useAppDispatch()
-  const { isLoading, taskBoardData, fetchTaskData } = useFetchTaskData()
+  const { taskBoardData, fetchTaskData } = useFetchTaskData()
 
   useEffect(() => {
     fetchTaskData()
