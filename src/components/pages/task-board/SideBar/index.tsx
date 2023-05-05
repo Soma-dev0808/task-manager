@@ -14,6 +14,7 @@ import {
   SpanLabel,
   Input,
   SpanDetail,
+  ButtonContainer,
 } from './Styles'
 import { useSidebar } from '../hooks/useSideBar'
 
@@ -44,18 +45,20 @@ export const Sidebar = () => {
           <Title>{taskInfo?.title}</Title>
         )}
 
-        {isEditable ? (
-          <SaveButton type="button" onClick={handleUpdateTask}>
-            Save
-          </SaveButton>
-        ) : (
-          <EditButton type="button" onClick={handleToggleEditable}>
-            Edit
-          </EditButton>
-        )}
-        <CloseButton type="button" onClick={handleClose}>
-          Close
-        </CloseButton>
+        <ButtonContainer>
+          {isEditable ? (
+            <SaveButton type="button" onClick={handleUpdateTask}>
+              Save
+            </SaveButton>
+          ) : (
+            <EditButton type="button" onClick={handleToggleEditable}>
+              Edit
+            </EditButton>
+          )}
+          <CloseButton type="button" onClick={handleClose}>
+            Close
+          </CloseButton>
+        </ButtonContainer>
       </TitleContainer>
 
       <DetailContainer>
