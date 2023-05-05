@@ -33,8 +33,6 @@ export const useSidebar = () => {
     }
   }, [isSidebarOpen])
 
-  console.log(taskInfo)
-
   const handleClickOutside = useCallback(
     (e: MouseEvent) => {
       const target = e.target as HTMLElement
