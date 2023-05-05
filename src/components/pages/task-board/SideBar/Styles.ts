@@ -28,6 +28,12 @@ const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 8px 8px 8px 0;
+  // TODO:fix here
+  @media (max-width: 540px) {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
 `
 
 const Title = styled.h2`
@@ -40,6 +46,18 @@ const TitleInput = styled.input`
   font-size: 1.5em;
   flex-grow: 1;
   margin-right: 16px;
+  @media (max-width: 540px) {
+    width: 100%;
+    margin-right: 0px;
+  }
+`
+const ButtonContainer = styled.div`
+  @media (max-width: 540px) {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    margin-top: 5px;
+  }
 `
 
 const SaveButton = styled.button`
@@ -64,6 +82,9 @@ const TextArea = styled.textarea`
   resize: none;
   margin-right: 16px;
   padding: 8px;
+  @media (max-width: 540px) {
+    margin-right: 0px;
+  }
 `
 
 const DetailContainer = styled.div`
@@ -106,6 +127,7 @@ export {
   TitleContainer,
   Title,
   TitleInput,
+  ButtonContainer,
   SaveButton,
   EditButton,
   CloseButton,
