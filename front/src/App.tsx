@@ -1,7 +1,8 @@
 import { Provider } from 'react-redux'
-import { TaskBoard } from './components/pages'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Toast from './components/ui/Toast'
 import { store } from './redux/app/configureStore'
+import { routes } from './routes'
 import Theme from './styles/ThemeProvider'
 
 function App() {
@@ -9,7 +10,13 @@ function App() {
     <Provider store={store}>
       <Theme>
         <Toast />
-        <TaskBoard />
+        <BrowserRouter>
+          <Routes>
+            {routes.map((route) => (
+              <Route key={route.path} path={route.path} Component={route.component} />
+            ))}
+          </Routes>
+        </BrowserRouter>
       </Theme>
     </Provider>
   )
