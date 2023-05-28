@@ -3,10 +3,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  OneToMany,
+  JoinColumn,
 } from "typeorm";
-import { TaskGroup } from "./TaskGroup";
 import { TaskBoard } from "./TaskBoard";
+import { TaskColumn } from "./TaskColumn";
 
 // TODO: Add assigned user
 @Entity()
@@ -26,9 +26,10 @@ export class Task {
   @Column("smallint", { nullable: true })
   order: number;
 
+  @ManyToOne(() => TaskColumn, (taskColumn) => taskColumn.tasks)
+  @JoinColumn({ name: "column_id" })
+  task_column: TaskColumn;
+
   @ManyToOne(() => TaskBoard, (taskBoard) => taskBoard.tasks)
   task_board: TaskBoard;
-
-  @OneToMany(() => TaskGroup, (taskGroup) => taskGroup.task)
-  task_groups: TaskGroup[];
 }

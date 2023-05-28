@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import taskBoardRoutes from "./routes/taskBoardRoutes";
 import taskColumnRoutes from "./routes/taskColumnRoutes";
+import taskRoutes from "./routes/taskRoutes";
 import { initializeDB } from "./db";
 
 dotenv.config();
@@ -28,6 +29,9 @@ app.use("/api/taskboard", taskBoardRoutes);
 
 // TaskBoard routes
 app.use("/api/columns", taskColumnRoutes);
+
+// Task routes
+app.use("/api/tasks", taskRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

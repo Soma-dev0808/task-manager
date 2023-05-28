@@ -64,33 +64,22 @@ export const getTaskColumns = async (req: Request, res: Response) => {
 };
 
 export const updateTaskColumnTitle = async (req: Request, res: Response) => {
-  const { column_id } = req.params;
-  const parsedColumnId = parseInt(column_id, 10);
+  const columnToUpdate = req.column;
   const { title } = req.body;
 
-  if (isNaN(parsedColumnId)) {
-    return res.status(400).json({
-      message: "Invalid column_id.",
+  if (typeof columnToUpdate === "undefined") {
+    return res.status(500).json({
+      message: "Something went wrong with the task.",
     });
   }
 
   try {
-    const column = await AppDataSource.manager.findOne(TaskColumn, {
-      where: { column_id: parsedColumnId },
-    });
-
-    if (!column) {
-      return res.status(400).json({
-        message: "Column not found!",
-      });
-    }
-
-    column.title = title;
-    await AppDataSource.manager.save(column);
+    columnToUpdate.title = title;
+    await AppDataSource.manager.save(columnToUpdate);
 
     return res.status(200).json({
       message: "Column updated successfully!",
-      column,
+      columnToUpdate,
     });
   } catch (error) {
     console.log(error);
@@ -101,27 +90,16 @@ export const updateTaskColumnTitle = async (req: Request, res: Response) => {
 };
 
 export const deleteColumn = async (req: Request, res: Response) => {
-  const { column_id } = req.params;
-  const parsedColumnId = parseInt(column_id, 10);
+  const columnToDelete = req.column;
 
-  if (isNaN(parsedColumnId)) {
-    return res.status(400).json({
-      message: "Invalid column_id.",
+  if (typeof columnToDelete === "undefined") {
+    return res.status(500).json({
+      message: "Something went wrong with the task.",
     });
   }
 
   try {
-    const column = await AppDataSource.manager.findOne(TaskColumn, {
-      where: { column_id: parsedColumnId },
-    });
-
-    if (!column) {
-      return res.status(404).json({
-        message: "Column not found.",
-      });
-    }
-
-    await AppDataSource.manager.remove(column);
+    await AppDataSource.manager.remove(columnToDelete);
 
     return res.status(200).json({
       message: "Column deleted successfully!",
