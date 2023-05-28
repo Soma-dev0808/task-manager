@@ -8,6 +8,7 @@ import {
 import { TaskGroup } from "./TaskGroup";
 import { TaskBoard } from "./TaskBoard";
 
+// TODO: Add assigned user
 @Entity()
 export class Task {
   @PrimaryGeneratedColumn()
