@@ -20,10 +20,10 @@ export class Task {
   @Column("varchar", { nullable: true, length: 255 })
   content: string;
 
-  @Column("int", { nullable: true })
+  @Column("smallint", { nullable: true })
   estimate: number;
 
-  @Column()
+  @Column("smallint", { nullable: true })
   order: number;
 
   @ManyToOne(() => TaskBoard, (taskBoard) => taskBoard.tasks)

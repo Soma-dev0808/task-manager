@@ -16,7 +16,7 @@ export class TaskColumn {
   @Column("varchar", { length: 255 })
   title: string;
 
-  @Column()
+  @Column("smallint", { nullable: true })
   order: number;
 
   @ManyToOne(() => TaskBoard, (taskBoard) => taskBoard.columns)
