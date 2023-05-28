@@ -1,42 +1,39 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AppDataSource } from "../db";
+import { Task } from "../models/Task";
 import { UserBoard } from "../models/UserBoard";
-import { TaskColumn } from "../models/TaskColumn";
 
-// Middleware if user corresponds to task board
-export const taskColumnMiddleware = async (
+export const taskMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { column_id } = req.params;
-  const parsedColumnId = parseInt(column_id, 10);
+  const { task_id } = req.params;
+  const parsedTaskId = parseInt(task_id, 10);
   const parsedUserId = parseInt(req.user.user_id, 10);
 
-  if (isNaN(parsedColumnId) || isNaN(parsedUserId)) {
+  if (isNaN(parsedTaskId) || isNaN(parsedUserId)) {
     return res.status(400).json({
-      message: "Invalid board_id.",
+      message: "Invalid task_id.",
     });
   }
 
   try {
-    const column = await AppDataSource.manager.findOne(TaskColumn, {
-      where: {
-        column_id: parsedColumnId,
-      },
-      relations: ["task_board"],
+    const targetTask = await AppDataSource.manager.findOne(Task, {
+      where: { task_id: parsedTaskId },
+      relations: ["task_column", "task_board"],
     });
 
-    if (!column) {
+    if (!targetTask) {
       return res.status(404).json({
-        message: "Column not found",
+        message: "Task not found.",
       });
     }
 
     const userBoard = await AppDataSource.manager.findOne(UserBoard, {
       where: {
         user: { user_id: parsedUserId },
-        task_board: { board_id: column.task_board.board_id },
+        task_board: { board_id: targetTask.task_board.board_id },
       },
     });
 
@@ -46,7 +43,7 @@ export const taskColumnMiddleware = async (
       });
     }
 
-    req.column = column;
+    req.task = targetTask;
     next();
   } catch (error) {
     console.log(error);

@@ -5,26 +5,22 @@ import {
   getTaskColumns,
   updateTaskColumnTitle,
 } from "../controllers/TaskColumnController";
-import { authenticationMiddleware } from "../middleware/authentication";
+import { authMiddleware } from "../middleware/authentication";
 import { taskBoardMiddleware } from "../middleware/taskboard";
 import { taskColumnMiddleware } from "../middleware/taskColumn";
 
 const router = express.Router();
 
-router.post("/create", authenticationMiddleware, createTaskColumn);
-router.get(
-  "/:board_id",
-  [authenticationMiddleware, taskBoardMiddleware],
-  getTaskColumns
-);
+router.post("/create", authMiddleware, createTaskColumn);
+router.get("/:board_id", [authMiddleware, taskBoardMiddleware], getTaskColumns);
 router.put(
   "/update/:column_id",
-  [authenticationMiddleware, taskColumnMiddleware],
+  [authMiddleware, taskColumnMiddleware],
   updateTaskColumnTitle
 );
 router.delete(
   "/delete/:column_id",
-  [authenticationMiddleware, taskColumnMiddleware],
+  [authMiddleware, taskColumnMiddleware],
   deleteColumn
 );
 

@@ -6,7 +6,7 @@ const unauthorizedResponse = {
   message: "Unauthorized!",
 };
 
-export const authenticationMiddleware = (
+export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction

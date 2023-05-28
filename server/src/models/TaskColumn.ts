@@ -5,8 +5,8 @@ import {
   OneToMany,
   ManyToOne,
 } from "typeorm";
-import { TaskGroup } from "./TaskGroup";
 import { TaskBoard } from "./TaskBoard";
+import { Task } from "./Task";
 
 @Entity()
 export class TaskColumn {
@@ -19,9 +19,9 @@ export class TaskColumn {
   @Column("smallint", { nullable: true })
   order: number;
 
+  @OneToMany(() => Task, (task) => task.task_column)
+  tasks: Task[];
+
   @ManyToOne(() => TaskBoard, (taskBoard) => taskBoard.columns)
   task_board: TaskBoard;
-
-  @OneToMany(() => TaskGroup, (taskGroup) => taskGroup.task_column)
-  task_groups: TaskGroup[];
 }
