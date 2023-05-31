@@ -22,7 +22,7 @@ export const routes = [
     component: Register,
   },
   {
-    path: routePath.taskBoard + '/:id',
+    path: routePath.taskBoard + '/:boardId',
     component: TaskBoard,
   },
   {

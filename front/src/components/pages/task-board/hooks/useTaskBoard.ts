@@ -2,17 +2,23 @@ import { useEffect, useCallback } from 'react'
 
 import type { OnDragEndResponder } from 'react-beautiful-dnd'
 
+import { useParams } from 'react-router-dom'
+import { useAuthToken } from '@/hooks/useAuthToken'
 import { useAppDispatch } from '@/redux/app/hook'
 import { taskBoardReducerActions } from '@/redux/feature/taskBoardSlice'
 import { useFetchTaskData } from './useFetchTaskData'
 
 const useTaskBoard = () => {
   const dispatch = useAppDispatch()
-  const { taskBoardData, fetchTaskData } = useFetchTaskData()
+  const { taskBoardData, taskBoardName, fetchTaskData } = useFetchTaskData()
+  const { getToken } = useAuthToken()
+  const { boardId } = useParams()
 
   useEffect(() => {
-    fetchTaskData()
-  }, [fetchTaskData])
+    const token = getToken()
+    if (typeof token === 'undefined' || typeof boardId === 'undefined') return
+    fetchTaskData(boardId, token)
+  }, [fetchTaskData, getToken, boardId])
 
   // TODO: add loader
   // console.log(isLoading)
@@ -67,6 +73,7 @@ const useTaskBoard = () => {
   )
 
   return {
+    taskBoardName,
     taskBoardData,
     onDragEnd,
   }

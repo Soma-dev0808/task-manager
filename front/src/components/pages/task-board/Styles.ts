@@ -13,4 +13,8 @@ const Container = styled.div`
   }
 `
 
-export { Container }
+const Title = styled.h1`
+  text-align: center;
+`
+
+export { Container, Title }

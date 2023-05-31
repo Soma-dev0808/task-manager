@@ -46,14 +46,19 @@ export const getTaskColumns = async (req: Request, res: Response) => {
   }
 
   try {
+    const taskBoard = await AppDataSource.manager.findOne(TaskBoard, {
+      where: { board_id: parsedBoardId },
+    });
+
     const taskColumns = await AppDataSource.manager.find(TaskColumn, {
       where: { task_board: { board_id: parsedBoardId } },
-      relations: ["task_board", "task_groups"],
+      relations: ["tasks"],
     });
 
     return res.status(200).json({
       message: "TaskColumns fetched successfully!",
       taskColumns,
+      taskBoard,
     });
   } catch (error) {
     console.log(error);

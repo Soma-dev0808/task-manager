@@ -22,11 +22,21 @@ export const register = async (req: Request, res: Response) => {
     user.email_address = email_address;
     user.password = await hashPassword(password);
 
-    await AppDataSource.manager.save(user);
+    const savedUser = await AppDataSource.manager.save(user);
+
+    const token = generateToken({
+      user_id: savedUser.user_id,
+      user_name: savedUser.user_name,
+    });
 
     return res.status(200).json({
       message: "User created successfully!",
-      user,
+      user: {
+        user_id: savedUser.user_id,
+        user_name: savedUser.user_name,
+        email_address: savedUser.email_address,
+      },
+      token,
     });
   } catch (err) {
     console.log(err);
@@ -72,6 +82,7 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({
       message: "Something went wrong!",
     });

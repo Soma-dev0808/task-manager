@@ -1,5 +1,6 @@
 import { DraggableLocation } from 'react-beautiful-dnd'
 import { dummyData } from '@/const/taskData'
+import { backend } from '@/repository'
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../app/configureStore'
 
@@ -38,6 +39,7 @@ type TaskDataType = {
 }
 
 type TaskBoardDataType = {
+  taskBoardName: string | undefined
   taskBoardData: TaskDataType
   isLoading: boolean
   error?: string | null
@@ -49,6 +51,7 @@ type TaskBoardDataType = {
 }
 
 const initialTaskBoardData: TaskBoardDataType = {
+  taskBoardName: undefined,
   taskBoardData: {
     tasks: {},
     columns: {},
@@ -63,15 +66,74 @@ const initialTaskBoardData: TaskBoardDataType = {
   },
 }
 
+// TODO: Add type file for backend response
+type APITaskDataType = {
+  column_id: number
+  order: number | null
+  title: string
+  tasks: {
+    order: number
+    task_id: number
+    title: string
+    content: string | null
+    estimate: string | null
+  }[]
+}
+
+// TODO: Add type file for backend response
+type APITaskBoardDataType = {
+  board_id: number
+  board_name: string
+}
+
 const dummyFetchTaskData = () => new Promise<TaskDataType>((res) => res(dummyData))
 
-const fetchTaskData = createAsyncThunk<{ taskBoardData: TaskDataType }>(
-  'taskBoard/fetchTaskData',
-  async () => {
-    const response = await dummyFetchTaskData()
-    return { taskBoardData: response }
+const modifyFetchedData = (data: APITaskDataType[]): TaskDataType => {
+  const taskBoardData = { tasks: {}, columns: {}, columnOrder: [] } as TaskDataType
+  try {
+    data.forEach((column) => {
+      column.tasks.forEach((task) => {
+        taskBoardData.tasks[`task-${task.task_id}`] = {
+          id: `task-${task.task_id}`,
+          title: task.title,
+          content: task.content ?? '',
+          estimate: task.estimate ? Number(task.estimate) : undefined,
+        }
+      })
+      taskBoardData.columns[`column-${column.column_id}`] = {
+        id: `column-${column.column_id}`,
+        title: column.title,
+        taskIds: column.tasks.map((task) => `task-${task.task_id}`),
+      }
+      taskBoardData.columnOrder.push(`column-${column.column_id}`)
+    })
+  } catch (error) {
+    console.log(error)
   }
-)
+
+  return taskBoardData
+}
+
+const fetchTaskData = createAsyncThunk<
+  { taskBoardData: TaskDataType; taskBoardName: string | undefined },
+  {
+    boardId: string
+    token: string
+  }
+>('taskBoard/fetchTaskData', async ({ boardId, token }) => {
+  const res = await backend.board.fetchTaskBoardData(token, boardId)
+
+  // TODO: Add error handling
+  if (res.status !== 200) {
+    // For now just return dummy data
+    const response = await dummyFetchTaskData()
+    return { taskBoardData: response, taskBoardName: undefined }
+  }
+
+  const taskColumns = res.data.taskColumns as APITaskDataType[]
+  const taskBoardName = res.data.taskBoard as APITaskBoardDataType
+  return { taskBoardData: modifyFetchedData(taskColumns), taskBoardName: taskBoardName.board_name }
+})
 
 export const taskBoardSlice = createSlice({
   name: 'taskBoard',
@@ -182,6 +244,7 @@ export const taskBoardSlice = createSlice({
       .addCase(fetchTaskData.fulfilled, (state, action) => {
         state.isLoading = false
         state.taskBoardData = action.payload.taskBoardData
+        state.taskBoardName = action.payload.taskBoardName
       })
       .addCase(fetchTaskData.rejected, (state, action) => {
         state.isLoading = false

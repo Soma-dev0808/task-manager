@@ -3,12 +3,13 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import Column from './Column'
 import { useTaskBoard } from './hooks/useTaskBoard'
 import { Sidebar } from './SideBar'
-import { Container } from './Styles'
+import { Container, Title } from './Styles'
 
 const TaskBoard = () => {
-  const { taskBoardData, onDragEnd } = useTaskBoard()
+  const { taskBoardData, taskBoardName, onDragEnd } = useTaskBoard()
   return (
     <>
+      <Title>{taskBoardName}</Title>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="all-columns" direction="horizontal" type="column">
           {(provided) => (
