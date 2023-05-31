@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import { AuthForm } from '@/components/ui/Layouts'
+import { routePath } from '@/routes'
 import { useRegistration } from './hooks/useRegistration'
 
 const Register = () => {
@@ -17,6 +19,15 @@ const Register = () => {
           type="password"
         />
         <AuthForm.SubmitButton>Submit</AuthForm.SubmitButton>
+        {/* TODO: Switch to Next.js */}
+        <Link
+          to={routePath.login}
+          style={{
+            textAlign: 'center',
+          }}
+        >
+          Login
+        </Link>
       </AuthForm>
     </>
   )

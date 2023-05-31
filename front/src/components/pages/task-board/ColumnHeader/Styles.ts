@@ -14,18 +14,4 @@ const Title = styled.h3`
   flex-grow: 1;
 `
 
-const Button = styled.button`
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const Image = styled.img`
-  width: 10px;
-  height: 10px;
-`
-
-export { Container, Title, Button, Image }
+export { Container, Title }
