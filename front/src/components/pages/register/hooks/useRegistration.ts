@@ -1,10 +1,16 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { checkIsEmpty, checkIsValidEmail, checkIsSamePassword } from '@/libs/validations'
+import { backend } from '@/repository'
+import { routePath } from '@/routes'
 
 export const useRegistration = () => {
   const [errMessage, setErrorMessage] = useState<string | undefined>(undefined)
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate()
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setErrorMessage(undefined)
     const { userName, emailAddress, password, passwordConfirmation } =
       e.target as typeof e.target & {
         userName: { value: string }
@@ -27,6 +33,22 @@ export const useRegistration = () => {
       setErrorMessage('Please check your input')
       return
     }
+
+    // TODO: Add middleware or axios.
+    // TODO: Add snakeToCamelCase middleware
+    const res = await backend.auth.postRegistration(
+      emailAddress.value,
+      userName.value,
+      password.value
+    )
+
+    if (res.status !== 200) {
+      const { message } = await res.data
+      setErrorMessage(message ?? 'Something went wrong')
+      return
+    }
+
+    navigate(routePath.selectTaskBoard)
   }
 
   return { errMessage, onSubmit }

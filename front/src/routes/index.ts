@@ -1,20 +1,32 @@
-import { Login, Register, TaskBoard } from '@/components/pages'
+import { Login, Register, TaskBoard, SelectTaskBoard } from '@/components/pages'
+
+export const routePath = {
+  root: '/',
+  login: '/login',
+  registration: '/registration',
+  taskBoard: '/task-board',
+  selectTaskBoard: '/select-task-board',
+}
 
 export const routes = [
   {
-    path: '/',
+    path: routePath.root,
     component: Login,
   },
   {
-    path: '/login',
+    path: routePath.login,
     component: Login,
   },
   {
-    path: '/register',
+    path: routePath.registration,
     component: Register,
   },
   {
-    path: '/task-board',
+    path: routePath.taskBoard + '/:id',
     component: TaskBoard,
+  },
+  {
+    path: routePath.selectTaskBoard,
+    component: SelectTaskBoard,
   },
 ]
