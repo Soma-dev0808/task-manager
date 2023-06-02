@@ -15,6 +15,7 @@ import {
   Input,
   SpanDetail,
   ButtonContainer,
+  DeleteButton,
 } from './Styles'
 import { useSidebar } from '../hooks/useSideBar'
 
@@ -26,6 +27,7 @@ export const Sidebar = () => {
     isEditable,
     handleToggleEditable,
     handleClose,
+    handleDeleteTask,
     handleEditTitle,
     handleEditContent,
     handleEditEstimate,
@@ -55,6 +57,9 @@ export const Sidebar = () => {
               Edit
             </EditButton>
           )}
+          <DeleteButton type="button" onClick={handleDeleteTask}>
+            Delete
+          </DeleteButton>
           <CloseButton type="button" onClick={handleClose}>
             Close
           </CloseButton>

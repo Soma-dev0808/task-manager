@@ -1,5 +1,4 @@
 import { DraggableLocation } from 'react-beautiful-dnd'
-import { dummyData } from '@/const/taskData'
 import { backend } from '@/repository'
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../app/configureStore'
@@ -86,8 +85,9 @@ type APITaskBoardDataType = {
   board_name: string
 }
 
-const dummyFetchTaskData = () => new Promise<TaskDataType>((res) => res(dummyData))
+// const dummyFetchTaskData = () => new Promise<TaskDataType>((res) => res(dummyData))
 
+// TODO: Move it somewhere
 const modifyFetchedData = (data: APITaskDataType[]): TaskDataType => {
   const taskBoardData = { tasks: {}, columns: {}, columnOrder: [] } as TaskDataType
   try {
@@ -125,14 +125,91 @@ const fetchTaskData = createAsyncThunk<
 
   // TODO: Add error handling
   if (res.status !== 200) {
+    throw new Error('Failed to fetch task data')
     // For now just return dummy data
-    const response = await dummyFetchTaskData()
-    return { taskBoardData: response, taskBoardName: undefined }
+    // const response = await dummyFetchTaskData()
+    // return { taskBoardData: response, taskBoardName: undefined }
   }
 
   const taskColumns = res.data.taskColumns as APITaskDataType[]
   const taskBoardName = res.data.taskBoard as APITaskBoardDataType
   return { taskBoardData: modifyFetchedData(taskColumns), taskBoardName: taskBoardName.board_name }
+})
+
+const createTask = createAsyncThunk<
+  { task: TaskType; columnId: string },
+  {
+    columnId: string
+    title: string
+    token: string
+  }
+>('taskBoard/createTask', async ({ columnId, title, token }) => {
+  const ci = columnId.split('-')[1]
+  const res = await backend.board.postTask(ci, title, token)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to create task')
+  }
+
+  const task = {
+    id: `task-${res.data.task.task_id}`,
+    title: res.data.task.title,
+    content: res.data.task.content ?? '',
+    estimate: res.data.task.estimate ? Number(res.data.task.estimate) : undefined,
+  }
+  return { task, columnId }
+})
+
+const updateTask = createAsyncThunk<
+  { task: TaskType },
+  { taskId: string; title: string; content: string; estimate: number | undefined; token: string }
+>('taskBoard/updateTask', async ({ taskId, title, content, estimate, token }) => {
+  const ti = taskId.split('-')[1]
+  const res = await backend.board.updateTask(ti, title, content, estimate ?? 0, token)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to update task')
+  }
+
+  const task = {
+    id: `task-${res.data.task.task_id}`,
+    title: res.data.task.title,
+    content: res.data.task.content ?? '',
+    estimate: res.data.task.estimate ? Number(res.data.task.estimate) : undefined,
+  }
+  return { task }
+})
+
+const deleteTask = createAsyncThunk<
+  { taskId: string; columnId: string },
+  { taskId: string; columnId: string; token: string }
+>('taskBoard/deleteTask', async ({ taskId, columnId, token }) => {
+  const ti = taskId.split('-')[1]
+  const res = await backend.board.deleteTask(ti, token)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to delete task')
+  }
+
+  return { taskId, columnId }
+})
+
+const createColumn = createAsyncThunk<
+  { column: ColumnType },
+  { title: string; token: string; boardId: string }
+>('taskBoard/createColumn', async ({ title, token, boardId }) => {
+  const res = await backend.board.postColumn(boardId, title, token)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to create column')
+  }
+
+  const column = {
+    id: `column-${res.data.column.column_id}`,
+    title: res.data.column.title,
+    taskIds: [],
+  }
+  return { column }
 })
 
 export const taskBoardSlice = createSlice({
@@ -181,22 +258,23 @@ export const taskBoardSlice = createSlice({
       state.taskBoardData.columns[newStart.id] = newStart
       state.taskBoardData.columns[newEnd.id] = newEnd
     },
-    handleAddTask: (state, action: PayloadAction<{ columnId: string; title: string }>) => {
-      const { columnId, title } = action.payload
-      const newTaskId = `task-${Object.keys(state.taskBoardData.tasks).length + 1}`
-      const newTask = {
-        id: newTaskId,
-        title,
-        content: '',
-        estimate: undefined,
-      }
+    // TODO: Remove
+    // handleAddTask: (state, action: PayloadAction<{ columnId: string; title: string }>) => {
+    //   const { columnId, title } = action.payload
+    //   const newTaskId = `task-${Object.keys(state.taskBoardData.tasks).length + 1}`
+    //   const newTask = {
+    //     id: newTaskId,
+    //     title,
+    //     content: '',
+    //     estimate: undefined,
+    //   }
 
-      state.taskBoardData.tasks[newTask.id] = newTask
-      state.taskBoardData.columns[columnId].taskIds = [
-        newTask.id,
-        ...state.taskBoardData.columns[columnId].taskIds,
-      ]
-    },
+    //   state.taskBoardData.tasks[newTask.id] = newTask
+    //   state.taskBoardData.columns[columnId].taskIds = [
+    //     newTask.id,
+    //     ...state.taskBoardData.columns[columnId].taskIds,
+    //   ]
+    // },
     toggleSidebar: (
       state,
       action: PayloadAction<
@@ -225,16 +303,17 @@ export const taskBoardSlice = createSlice({
       state.sideBar.task = state.taskBoardData.tasks[task]
       state.sideBar.columnId = columnId
     },
-    updateTask: (state, action: PayloadAction<TaskType>) => {
-      const { id, title, content, estimate } = action.payload
-      if (typeof id === 'undefined') return
-      state.taskBoardData.tasks[id] = {
-        ...state.taskBoardData.tasks[id],
-        title,
-        content,
-        estimate,
-      }
-    },
+    // TODO: Remove
+    // updateTask: (state, action: PayloadAction<TaskType>) => {
+    //   const { id, title, content, estimate } = action.payload
+    //   if (typeof id === 'undefined') return
+    //   state.taskBoardData.tasks[id] = {
+    //     ...state.taskBoardData.tasks[id],
+    //     title,
+    //     content,
+    //     estimate,
+    //   }
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -247,6 +326,69 @@ export const taskBoardSlice = createSlice({
         state.taskBoardName = action.payload.taskBoardName
       })
       .addCase(fetchTaskData.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(createTask.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.isLoading = false
+        const { task, columnId } = action.payload
+        const newTaskId = task.id
+        state.taskBoardData.tasks[newTaskId] = task
+        state.taskBoardData.columns[columnId].taskIds = [
+          newTaskId,
+          ...state.taskBoardData.columns[columnId].taskIds,
+        ]
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(updateTask.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        const { id, title, content, estimate } = action.payload.task
+        state.taskBoardData.tasks[id] = {
+          ...state.taskBoardData.tasks[id],
+          id,
+          title,
+          content,
+          estimate,
+        }
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        const { taskId, columnId } = action.payload
+        const newTaskIds = state.taskBoardData.columns[columnId].taskIds.filter(
+          (id) => id !== taskId
+        )
+        state.taskBoardData.columns[columnId].taskIds = newTaskIds
+        delete state.taskBoardData.tasks[taskId]
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(createColumn.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(createColumn.fulfilled, (state, action) => {
+        state.isLoading = false
+        const { column } = action.payload
+        const newColumnId = column.id
+        state.taskBoardData.columns[newColumnId] = column
+        state.taskBoardData.columnOrder = [...state.taskBoardData.columnOrder, newColumnId]
+      })
+      .addCase(createColumn.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.error.message
       })
@@ -268,7 +410,14 @@ const selectTask = (columnId: string, taskId: string) => (state: RootState) => {
 }
 const selectSideBar = (state: RootState) => state.taskBoard.sideBar
 
-const taskBoardReducerActions = { fetchTaskData, ...taskBoardSlice.actions }
+const taskBoardReducerActions = {
+  fetchTaskData,
+  createTask,
+  updateTask,
+  deleteTask,
+  createColumn,
+  ...taskBoardSlice.actions,
+}
 
 export {
   selectTaskBoardSlice,

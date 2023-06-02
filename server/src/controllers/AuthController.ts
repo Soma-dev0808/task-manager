@@ -1,7 +1,7 @@
 import { User } from "../models/User";
 import { Request, Response } from "express";
 import { comparePassword, hashPassword } from "../utils/password";
-import { generateToken, verifyToken } from "../utils/jwt";
+import { generateToken } from "../utils/jwt";
 import { AppDataSource } from "../db";
 
 export const register = async (req: Request, res: Response) => {

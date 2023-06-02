@@ -11,22 +11,22 @@ export const routePath = {
 export const routes = [
   {
     path: routePath.root,
-    component: Login,
+    component: () => Login,
   },
   {
     path: routePath.login,
-    component: Login,
+    component: () => Login,
   },
   {
     path: routePath.registration,
-    component: Register,
+    component: () => Register,
   },
   {
     path: routePath.taskBoard + '/:boardId',
-    component: TaskBoard,
+    component: () => TaskBoard,
   },
   {
     path: routePath.selectTaskBoard,
-    component: SelectTaskBoard,
+    component: () => SelectTaskBoard,
   },
 ]

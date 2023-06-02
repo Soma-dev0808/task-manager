@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { useDispatch } from 'react-redux'
 import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
+import { useAuthToken } from '@/hooks/useAuthToken'
+import { useAppDispatch } from '@/redux/app/hook'
 import { taskBoardReducerActions } from '@/redux/feature/taskBoardSlice'
 
 const useHandleAddTask = ({ id, handleClose }: { id: string; handleClose?: () => void }) => {
   const ref = useRef<HTMLInputElement>(null)
   const [newTaskTitle, setNewTaskTitle] = useState<string>('')
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { showToast } = useShowToast()
+  const { getToken } = useAuthToken()
 
   // focus on render
   useEffect(() => {
@@ -22,8 +24,11 @@ const useHandleAddTask = ({ id, handleClose }: { id: string; handleClose?: () =>
     if (e.key === 'Enter') handleAddTask()
   }
 
-  const handleAddTask = () => {
-    dispatch(taskBoardReducerActions.handleAddTask({ columnId: id, title: newTaskTitle }))
+  const handleAddTask = async () => {
+    const token = getToken()
+    if (typeof token === 'undefined') return
+    // dispatch(taskBoardReducerActions.handleAddTask({ columnId: id, title: newTaskTitle }))
+    await dispatch(taskBoardReducerActions.createTask({ columnId: id, title: newTaskTitle, token }))
     setNewTaskTitle('')
     showToast({
       title: 'Task added',

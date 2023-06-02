@@ -11,6 +11,7 @@ const Container = styled.div`
   flex-direction: column;
   background-color: ${({ theme }) => theme.colors.baseBlack};
   position: relative;
+  flex-shrink: 0;
 `
 
 const TaskList = styled.div<TaskListProps>`

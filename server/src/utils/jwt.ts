@@ -14,7 +14,11 @@ const generateToken = (payload: string | object | Buffer) => {
 };
 
 const verifyToken = (token: string) => {
-  return jwt.verify(token, JWT_SECRET) as string | UserJwtPayload;
+  try {
+    return jwt.verify(token, JWT_SECRET) as string | UserJwtPayload;
+  } catch (error) {
+    return undefined;
+  }
 };
 
 export { generateToken, verifyToken };
