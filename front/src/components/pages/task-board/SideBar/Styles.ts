@@ -5,19 +5,18 @@ const Container = styled.div<ContainerProps>`
   box-sizing: border-box;
   position: fixed;
   top: 0;
-  right: -532px;
   height: 100%;
-  width: 500px;
+  width: 600px;
   background-color: #f8f9fa;
   padding: 16px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   transition: right 0.3s ease;
-  right: ${(props) => (props.isOpen ? '0' : '-532px')};
+  right: ${(props) => (props.isOpen ? '0' : '-632px')};
   background-color: ${({ theme }) => theme.colors.baseBlack};
   border-left: 1px solid ${({ theme }) => theme.colors.baseBoarder};
   overflow-y: scroll;
   // TODO:fix here
-  @media (max-width: 540px) {
+  @media (max-width: 600px) {
     width: 100%;
   }
 `
@@ -52,6 +51,8 @@ const TitleInput = styled.input`
   }
 `
 const ButtonContainer = styled.div`
+  display: flex;
+  gap: 8px;
   @media (max-width: 540px) {
     width: 100%;
     display: flex;
@@ -67,9 +68,11 @@ const SaveButton = styled.button`
 const EditButton = styled.button`
   background-color: ${({ theme }) => theme.colors.default};
 `
+const DeleteButton = styled.button`
+  background-color: ${({ theme }) => theme.colors.danger};
+`
 
 const CloseButton = styled.button`
-  margin-left: 8px;
   background-color: transparent;
   outline: none;
   border: none;
@@ -130,6 +133,7 @@ export {
   ButtonContainer,
   SaveButton,
   EditButton,
+  DeleteButton,
   CloseButton,
   TextArea,
   DetailContainer,

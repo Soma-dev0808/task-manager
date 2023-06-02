@@ -4,13 +4,21 @@ import { useAppSelector, useAppDispatch } from '@/redux/app/hook'
 import { selectTaskBoardSlice, taskBoardReducerActions } from '@/redux/feature/taskBoardSlice'
 
 const useFetchTaskData = () => {
-  const { isLoading, taskBoardData, error } = useAppSelector(selectTaskBoardSlice)
+  const { isLoading, taskBoardData, taskBoardName, error } = useAppSelector(selectTaskBoardSlice)
   const { showToast } = useShowToast()
   const dispatch = useAppDispatch()
 
-  const fetchTaskData = useCallback(() => {
-    dispatch(taskBoardReducerActions.fetchTaskData())
-  }, [dispatch])
+  const fetchTaskData = useCallback(
+    (boardId: string, token: string) => {
+      dispatch(
+        taskBoardReducerActions.fetchTaskData({
+          boardId,
+          token,
+        })
+      )
+    },
+    [dispatch]
+  )
 
   useEffect(() => {
     if (typeof error !== 'string') return
@@ -21,7 +29,7 @@ const useFetchTaskData = () => {
     })
   }, [error, showToast])
 
-  return { isLoading, taskBoardData, fetchTaskData }
+  return { isLoading, taskBoardData, taskBoardName, fetchTaskData }
 }
 
 export { useFetchTaskData }

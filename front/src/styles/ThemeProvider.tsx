@@ -3,6 +3,7 @@ import { ThemeProvider } from 'styled-components'
 
 const colorPallet = {
   baseBlack: '#242424',
+  danger: '#ff5252',
   scaleGreen40: '#51E1B5',
   scaleGreen50: '#00BE84',
   scaleGreen60: '#0EA97A',
@@ -22,6 +23,7 @@ const theme = {
     baseBoarder: colorPallet.scaleGrey50,
     primary: colorPallet.scaleGreen60,
     default: colorPallet.scaleGrey50,
+    danger: colorPallet.danger,
     secondBaseBlack: colorPallet.scaleGrey80,
   },
   fonts: ['sans-serif', 'Roboto'],

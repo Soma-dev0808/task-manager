@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
+import { useAuthToken } from '@/hooks/useAuthToken'
 import { useAppSelector, useAppDispatch } from '@/redux/app/hook'
 import {
   TaskType,
@@ -17,9 +18,11 @@ export const useSidebar = () => {
     content: '',
     estimate: 0,
   })
+
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const dispatch = useAppDispatch()
   const { showToast } = useShowToast()
+  const { getToken } = useAuthToken()
 
   useEffect(() => {
     if (typeof sideBarTask === 'undefined') return
@@ -55,6 +58,35 @@ export const useSidebar = () => {
 
   const handleToggleEditable = () => setIsEditable((prev) => !prev)
 
+  const handleDeleteTask = async () => {
+    const token = getToken()
+    if (
+      typeof taskInfo.id === 'undefined' ||
+      typeof columnId === 'undefined' ||
+      typeof token === 'undefined'
+    )
+      return
+    await dispatch(
+      taskBoardReducerActions.deleteTask({
+        taskId: taskInfo.id,
+        columnId: columnId,
+        token,
+      })
+    )
+    dispatch(
+      taskBoardReducerActions.toggleSidebar({
+        isOpen: false,
+      })
+    )
+    showToast({
+      title: 'Task Deleted',
+      message: `Task name: ${taskInfo.title}`,
+      options: {
+        position: 'bottom-right',
+      },
+    })
+  }
+
   const handleClose = () => {
     dispatch(
       taskBoardReducerActions.toggleSidebar({
@@ -76,12 +108,16 @@ export const useSidebar = () => {
     setTaskInfo((prev) => ({ ...prev, estimate: Number(e.target.value) }))
   }
 
-  const handleUpdateTask = () => {
-    if (typeof taskInfo.id === 'undefined' || taskInfo.title === '') return
-    dispatch(
+  const handleUpdateTask = async () => {
+    const token = getToken()
+    if (typeof taskInfo.id === 'undefined' || taskInfo.title === '' || typeof token === 'undefined')
+      return
+    await dispatch(
       taskBoardReducerActions.updateTask({
         ...taskInfo,
+        taskId: taskInfo.id,
         estimate: taskInfo.estimate ?? 0,
+        token,
       })
     )
     setIsEditable(false)
@@ -100,6 +136,7 @@ export const useSidebar = () => {
     columnInfo,
     isEditable,
     handleToggleEditable,
+    handleDeleteTask,
     handleClose,
     handleEditTitle,
     handleEditContent,

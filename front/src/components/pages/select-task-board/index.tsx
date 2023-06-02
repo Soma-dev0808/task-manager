@@ -1,7 +1,15 @@
-import { Button } from '@/components/ui/Button'
+import { IconButton, Button } from '@/components/ui/Button'
 import { PlusIcon } from '@/components/ui/Icons/PlusIcon'
+import { routePath } from '@/routes'
 import { useSelectTaskBoard } from './hooks/useSelectTaskBoard'
-import { AddTaskBoardWrapper, SelectTaskBoardWrapper } from './Styles'
+import {
+  AddTaskBoardWrapper,
+  BoardName,
+  BoardNameList,
+  BoardNameWrapper,
+  SelectTaskBoardWrapper,
+  StyledLink,
+} from './Styles'
 
 const SelectTaskBoard = () => {
   const { taskBoardList, handleCreateTaskBoard, setAddTaskInput, addTaskInput } =
@@ -12,17 +20,22 @@ const SelectTaskBoard = () => {
       <h1>Select Task Board</h1>
       <AddTaskBoardWrapper>
         <input value={addTaskInput} onChange={(e) => setAddTaskInput(e.target.value)} />
-        <Button onClick={() => handleCreateTaskBoard(addTaskInput)}>
+        <IconButton onClick={() => handleCreateTaskBoard(addTaskInput)}>
           <PlusIcon />
-        </Button>
+        </IconButton>
       </AddTaskBoardWrapper>
-      <div>
+      <BoardNameList>
         {taskBoardList.map((taskBoard) => (
-          <div key={taskBoard.board_id}>
-            Board name: <span>{taskBoard.board_name}</span>
-          </div>
+          <BoardNameWrapper key={taskBoard.board_id}>
+            <BoardName>
+              <span>{taskBoard.board_name}</span>
+            </BoardName>
+            <Button>
+              <StyledLink to={`${routePath.taskBoard}/${taskBoard.board_id}`}>Select</StyledLink>
+            </Button>
+          </BoardNameWrapper>
         ))}
-      </div>
+      </BoardNameList>
     </SelectTaskBoardWrapper>
   )
 }

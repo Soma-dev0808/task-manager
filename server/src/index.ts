@@ -25,7 +25,7 @@ initializeDB().catch((err) => {
 app.use("/api/auth", authRoutes);
 
 // TaskBoard routes
-app.use("/api/taskboard", taskBoardRoutes);
+app.use("/api/task-board", taskBoardRoutes);
 
 // TaskBoard routes
 app.use("/api/columns", taskColumnRoutes);
