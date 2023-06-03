@@ -6,6 +6,7 @@ import taskBoardRoutes from "./routes/taskBoardRoutes";
 import taskColumnRoutes from "./routes/taskColumnRoutes";
 import taskRoutes from "./routes/taskRoutes";
 import { initializeDB } from "./db";
+import swaggerDocs from "./utils/swagger";
 
 dotenv.config();
 
@@ -35,4 +36,6 @@ app.use("/api/tasks", taskRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
+
+  swaggerDocs(app, port);
 });

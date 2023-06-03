@@ -1,5 +1,4 @@
 import { Response, Request } from "express";
-import {} from "../types";
 import { AppDataSource } from "../db";
 import { User } from "../models/User";
 import { TaskBoard } from "../models/TaskBoard";
