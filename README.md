@@ -15,6 +15,7 @@
 - Express.js
 - typeorm
 - Postgresql
+- openapi swagger 
 
 
 ### Entity Relationship Diagram
