@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec ts-node src/index.ts",
     "build": "npm i && tsc",
-    "start": "node dist/index.js",
+    "start": "node ../dist/index.js",
     "postinstall": "tsc"
   },
   "author": "",
