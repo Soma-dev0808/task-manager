@@ -41,10 +41,14 @@ type TaskBoardDataType = {
   taskBoardName: string | undefined
   taskBoardData: TaskDataType
   isLoading: boolean
-  error?: string | null
+  error?: string
   sideBar: {
     isOpen: boolean
     task: TaskType | undefined
+    columnId: string | undefined
+  }
+  modal: {
+    isOpen: boolean
     columnId: string | undefined
   }
 }
@@ -57,10 +61,14 @@ const initialTaskBoardData: TaskBoardDataType = {
     columnOrder: [],
   },
   isLoading: false,
-  error: null,
+  error: undefined,
   sideBar: {
     isOpen: false,
     task: undefined,
+    columnId: undefined,
+  },
+  modal: {
+    isOpen: false,
     columnId: undefined,
   },
 }
@@ -85,13 +93,20 @@ type APITaskBoardDataType = {
   board_name: string
 }
 
-// const dummyFetchTaskData = () => new Promise<TaskDataType>((res) => res(dummyData))
+const sortOrder = <T extends { order: number | null }, U extends { order: number | null }>(
+  a: T,
+  b: U
+) => {
+  if (a.order === null) return 1
+  if (b.order === null) return -1
+  return a.order - b.order
+}
 
 // TODO: Move it somewhere
 const modifyFetchedData = (data: APITaskDataType[]): TaskDataType => {
   const taskBoardData = { tasks: {}, columns: {}, columnOrder: [] } as TaskDataType
   try {
-    data.forEach((column) => {
+    data.sort(sortOrder).forEach((column) => {
       column.tasks.forEach((task) => {
         taskBoardData.tasks[`task-${task.task_id}`] = {
           id: `task-${task.task_id}`,
@@ -103,7 +118,7 @@ const modifyFetchedData = (data: APITaskDataType[]): TaskDataType => {
       taskBoardData.columns[`column-${column.column_id}`] = {
         id: `column-${column.column_id}`,
         title: column.title,
-        taskIds: column.tasks.map((task) => `task-${task.task_id}`),
+        taskIds: column.tasks.sort(sortOrder).map((task) => `task-${task.task_id}`),
       }
       taskBoardData.columnOrder.push(`column-${column.column_id}`)
     })
@@ -180,6 +195,50 @@ const updateTask = createAsyncThunk<
   return { task }
 })
 
+const updateTaskOrder = createAsyncThunk<
+  { tasks: TaskType[] },
+  { columnId: string; taskId: string; newOrderIdx: number; token: string }
+>('taskBoard/updateTaskOrder', async ({ columnId, taskId, newOrderIdx, token }) => {
+  const ti = taskId.split('-')[1]
+  const ci = columnId.split('-')[1]
+  const res = await backend.board.updateTaskOrder(ti, ci, newOrderIdx + 1, token)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to update task order')
+  }
+
+  return { tasks: res.data as TaskType[] }
+})
+
+const updateColumnOrder = createAsyncThunk<
+  { tasks: TaskType[] },
+  { columnId: string; columnOrderIdx: number; token: string }
+>('taskBoard/updateColumnOrder', async ({ columnId, columnOrderIdx, token }) => {
+  const ci = columnId.split('-')[1]
+  const res = await backend.board.updateColumnOrder(ci, columnOrderIdx + 1, token)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to update column order')
+  }
+
+  return { tasks: res.data as TaskType[] }
+})
+
+const updateTaskOrderOverColumn = createAsyncThunk<
+  { tasks: TaskType[] },
+  { taskId: string; newColumnId: string; newOrderIdx: number; token: string }
+>('taskBoard/updateTaskOrderOverColumn', async ({ taskId, newColumnId, newOrderIdx, token }) => {
+  const ti = taskId.split('-')[1]
+  const newCi = newColumnId.split('-')[1]
+  const res = await backend.board.updateTaskOrderOverColumn(ti, newCi, newOrderIdx + 1, token)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to update column order')
+  }
+
+  return { tasks: res.data as TaskType[] }
+})
+
 const deleteTask = createAsyncThunk<
   { taskId: string; columnId: string },
   { taskId: string; columnId: string; token: string }
@@ -193,6 +252,21 @@ const deleteTask = createAsyncThunk<
 
   return { taskId, columnId }
 })
+
+const deleteColumn = createAsyncThunk<{ columnId: string }, { columnId: string; token: string }>(
+  'taskBoard/deleteColumn',
+  async ({ columnId, token }) => {
+    const ci = columnId.split('-')[1]
+
+    const res = await backend.board.deleteColumn(ci, token)
+
+    if (res.status !== 200) {
+      throw new Error('Failed to delete column')
+    }
+
+    return { columnId }
+  }
+)
 
 const createColumn = createAsyncThunk<
   { column: ColumnType },
@@ -229,6 +303,7 @@ export const taskBoardSlice = createSlice({
       const { source, destination, draggableId } = action.payload
       const column = state.taskBoardData.columns[source.droppableId]
       const newTaskIds = [...column.taskIds]
+
       newTaskIds.splice(source.index, 1)
       newTaskIds.splice(destination.index, 0, draggableId)
 
@@ -258,23 +333,6 @@ export const taskBoardSlice = createSlice({
       state.taskBoardData.columns[newStart.id] = newStart
       state.taskBoardData.columns[newEnd.id] = newEnd
     },
-    // TODO: Remove
-    // handleAddTask: (state, action: PayloadAction<{ columnId: string; title: string }>) => {
-    //   const { columnId, title } = action.payload
-    //   const newTaskId = `task-${Object.keys(state.taskBoardData.tasks).length + 1}`
-    //   const newTask = {
-    //     id: newTaskId,
-    //     title,
-    //     content: '',
-    //     estimate: undefined,
-    //   }
-
-    //   state.taskBoardData.tasks[newTask.id] = newTask
-    //   state.taskBoardData.columns[columnId].taskIds = [
-    //     newTask.id,
-    //     ...state.taskBoardData.columns[columnId].taskIds,
-    //   ]
-    // },
     toggleSidebar: (
       state,
       action: PayloadAction<
@@ -303,22 +361,29 @@ export const taskBoardSlice = createSlice({
       state.sideBar.task = state.taskBoardData.tasks[task]
       state.sideBar.columnId = columnId
     },
-    // TODO: Remove
-    // updateTask: (state, action: PayloadAction<TaskType>) => {
-    //   const { id, title, content, estimate } = action.payload
-    //   if (typeof id === 'undefined') return
-    //   state.taskBoardData.tasks[id] = {
-    //     ...state.taskBoardData.tasks[id],
-    //     title,
-    //     content,
-    //     estimate,
-    //   }
-    // },
+    toggleModal: (
+      state,
+      action: PayloadAction<
+        | {
+            isOpen: true
+            columnId: string
+          }
+        | {
+            isOpen: false
+            columnId?: undefined
+          }
+      >
+    ) => {
+      const { isOpen, columnId } = action.payload
+      state.modal.isOpen = isOpen
+      state.modal.columnId = columnId
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTaskData.pending, (state) => {
         state.isLoading = true
+        state.error = undefined
       })
       .addCase(fetchTaskData.fulfilled, (state, action) => {
         state.isLoading = false
@@ -331,6 +396,7 @@ export const taskBoardSlice = createSlice({
       })
       .addCase(createTask.pending, (state) => {
         state.isLoading = true
+        state.error = undefined
       })
       .addCase(createTask.fulfilled, (state, action) => {
         state.isLoading = false
@@ -348,6 +414,7 @@ export const taskBoardSlice = createSlice({
       })
       .addCase(updateTask.pending, (state) => {
         state.isLoading = true
+        state.error = undefined
       })
       .addCase(updateTask.fulfilled, (state, action) => {
         const { id, title, content, estimate } = action.payload.task
@@ -365,6 +432,7 @@ export const taskBoardSlice = createSlice({
       })
       .addCase(deleteTask.pending, (state) => {
         state.isLoading = true
+        state.error = undefined
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
         const { taskId, columnId } = action.payload
@@ -380,6 +448,7 @@ export const taskBoardSlice = createSlice({
       })
       .addCase(createColumn.pending, (state) => {
         state.isLoading = true
+        state.error = undefined
       })
       .addCase(createColumn.fulfilled, (state, action) => {
         state.isLoading = false
@@ -391,6 +460,54 @@ export const taskBoardSlice = createSlice({
       .addCase(createColumn.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.error.message
+      })
+      .addCase(updateTaskOrder.pending, (state) => {
+        state.isLoading = true
+        state.error = undefined
+      })
+      .addCase(updateTaskOrder.fulfilled, (state) => {
+        state.isLoading = false
+      })
+      .addCase(updateTaskOrder.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(updateColumnOrder.pending, (state) => {
+        state.isLoading = true
+        state.error = undefined
+      })
+      .addCase(updateColumnOrder.fulfilled, (state) => {
+        state.isLoading = false
+      })
+      .addCase(updateColumnOrder.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(updateTaskOrderOverColumn.pending, (state) => {
+        state.isLoading = true
+        state.error = undefined
+      })
+      .addCase(updateTaskOrderOverColumn.fulfilled, (state) => {
+        state.isLoading = false
+      })
+      .addCase(updateTaskOrderOverColumn.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(deleteColumn.pending, (state) => {
+        state.isLoading = true
+        state.error = undefined
+      })
+      .addCase(deleteColumn.fulfilled, (state, action) => {
+        state.isLoading = false
+        const { columnId } = action.payload
+        const newColumnOrder = state.taskBoardData.columnOrder.filter((id) => id !== columnId)
+        state.taskBoardData.columnOrder = newColumnOrder
+        delete state.taskBoardData.columns[columnId]
+      })
+      .addCase(deleteColumn.rejected, (state) => {
+        state.isLoading = false
+        state.error = 'Make sure to delete all tasks in the column first.'
       })
   },
 })
@@ -409,6 +526,7 @@ const selectTask = (columnId: string, taskId: string) => (state: RootState) => {
   return task
 }
 const selectSideBar = (state: RootState) => state.taskBoard.sideBar
+const selectModal = (state: RootState) => state.taskBoard.modal
 
 const taskBoardReducerActions = {
   fetchTaskData,
@@ -416,6 +534,10 @@ const taskBoardReducerActions = {
   updateTask,
   deleteTask,
   createColumn,
+  deleteColumn,
+  updateTaskOrder,
+  updateColumnOrder,
+  updateTaskOrderOverColumn,
   ...taskBoardSlice.actions,
 }
 
@@ -428,6 +550,7 @@ export {
   selectColumn,
   selectTask,
   selectSideBar,
+  selectModal,
   taskBoardReducerActions,
 }
 

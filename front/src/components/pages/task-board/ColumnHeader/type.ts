@@ -5,6 +5,7 @@ type ColumnHeaderProps = {
   title: string
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined
   handlePlusClick: () => void
+  handleToggleDeleteColumnModal: (columnId: string) => void
 }
 
 export type { ColumnHeaderProps }
