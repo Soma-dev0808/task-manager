@@ -4,6 +4,8 @@ import {
   createTask,
   deleteTask,
   updateTask,
+  updateTaskOrder,
+  updateTaskOrderOverColumn,
 } from "../controllers/TaskController";
 import { taskMiddleware } from "../middleware/taskMiddleware";
 
@@ -228,5 +230,17 @@ router.put("/update/:task_id", [authMiddleware, taskMiddleware], updateTask);
  *                   example: Something went wrong!
  */
 router.delete("/delete/:task_id", [authMiddleware, taskMiddleware], deleteTask);
+
+router.put(
+  "/update-order/:task_id",
+  [authMiddleware, taskMiddleware],
+  updateTaskOrder
+);
+
+router.put(
+  "/update-order-over-column/:task_id",
+  [authMiddleware, taskMiddleware],
+  updateTaskOrderOverColumn
+);
 
 export default router;

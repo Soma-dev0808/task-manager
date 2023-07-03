@@ -3,6 +3,7 @@ import {
   createTaskColumn,
   deleteColumn,
   getTaskColumns,
+  updateColumnOrder,
   updateTaskColumnTitle,
 } from "../controllers/TaskColumnController";
 import { authMiddleware } from "../middleware/authentication";
@@ -279,6 +280,12 @@ router.delete(
   "/delete/:column_id",
   [authMiddleware, taskColumnMiddleware],
   deleteColumn
+);
+
+router.put(
+  "/update-order/:column_id",
+  [authMiddleware, taskColumnMiddleware],
+  updateColumnOrder
 );
 
 export default router;
