@@ -14,7 +14,7 @@ const colorPallet = {
   scaleGrey60: '#30363D',
   scaleGrey70: '#21262D',
   scaleGrey80: '#161B22',
-}
+} as const
 
 const theme = {
   colors: {
@@ -32,10 +32,17 @@ const theme = {
     medium: '2em',
     large: '3em',
   },
-}
+} as const
 
 const Theme = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider theme={theme}>{children}</ThemeProvider>
 )
+
+type ThemeType = typeof theme
+type ColorsType = keyof ThemeType['colors']
+type FontType = keyof ThemeType['fonts']
+type FontSizeType = keyof ThemeType['fontSizes']
+
+export type { ThemeType, ColorsType, FontType, FontSizeType }
 
 export default Theme

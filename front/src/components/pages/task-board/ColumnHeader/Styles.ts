@@ -13,5 +13,9 @@ const Title = styled.h3`
   margin: 0;
   flex-grow: 1;
 `
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 8px;
+`
 
-export { Container, Title }
+export { Container, Title, ButtonsContainer }

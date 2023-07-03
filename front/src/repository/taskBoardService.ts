@@ -53,6 +53,63 @@ const updateTask = async (
   )
 }
 
+const updateTaskOrder = async (
+  taskId: string,
+  columnId: string,
+  newOrder: number,
+  token: string
+) => {
+  return await axios.put(
+    `${import.meta.env.VITE_NODEJS_SERVER}/api/tasks/update-order/${taskId}`,
+    {
+      column_id: columnId,
+      new_order: newOrder,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+}
+
+const updateColumnOrder = async (columnId: string, newOrder: number, token: string) => {
+  return await axios.put(
+    `${import.meta.env.VITE_NODEJS_SERVER}/api/columns/update-order/${columnId}`,
+    {
+      new_order: newOrder,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+}
+
+const updateTaskOrderOverColumn = async (
+  taskId: string,
+  newColumnId: string,
+  newOrder: number,
+  token: string
+) => {
+  return await axios.put(
+    `${import.meta.env.VITE_NODEJS_SERVER}/api/tasks/update-order-over-column/${taskId}`,
+    {
+      new_column_id: newColumnId,
+      new_order: newOrder,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+}
+
 const deleteTask = async (taskId: string, token: string) => {
   return await axios.delete(`${import.meta.env.VITE_NODEJS_SERVER}/api/tasks/delete/${taskId}`, {
     headers: {
@@ -60,6 +117,18 @@ const deleteTask = async (taskId: string, token: string) => {
       Authorization: `Bearer ${token}`,
     },
   })
+}
+
+const deleteColumn = async (columnId: string, token: string) => {
+  return await axios.delete(
+    `${import.meta.env.VITE_NODEJS_SERVER}/api/columns/delete/${columnId}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
 }
 
 const postColumn = async (boardId: string, title: string, token: string) => {
@@ -78,4 +147,14 @@ const postColumn = async (boardId: string, title: string, token: string) => {
   )
 }
 
-export const taskBoardImpl = { fetchTaskBoardData, postTask, updateTask, deleteTask, postColumn }
+export const taskBoardImpl = {
+  fetchTaskBoardData,
+  postTask,
+  updateTask,
+  updateTaskOrder,
+  updateColumnOrder,
+  updateTaskOrderOverColumn,
+  deleteTask,
+  deleteColumn,
+  postColumn,
+}

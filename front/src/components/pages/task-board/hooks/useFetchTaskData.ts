@@ -21,11 +21,14 @@ const useFetchTaskData = () => {
   )
 
   useEffect(() => {
-    if (typeof error !== 'string') return
+    if (typeof error === 'undefined') return
     showToast({
-      title: 'error',
+      title: 'Error',
       message: error,
       type: 'error',
+      options: {
+        autoClose: false,
+      },
     })
   }, [error, showToast])
 

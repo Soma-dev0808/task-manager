@@ -43,7 +43,12 @@ export const MenuBar = () => {
           Add Column:
           <ColumnInputContainer>
             <input value={columnName} onChange={(e) => setColumnName(e.target.value)} />
-            <IconButton type="button" $primary disabled={isEmpty} onClick={handleCreateColumn}>
+            <IconButton
+              type="button"
+              buttonColor="primary"
+              disabled={isEmpty}
+              onClick={handleCreateColumn}
+            >
               <PlusIcon />
             </IconButton>
           </ColumnInputContainer>

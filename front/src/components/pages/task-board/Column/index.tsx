@@ -26,6 +26,15 @@ const Column = ({ column: { title, id }, tasks, index }: ColumnProps) => {
     )
   }
 
+  const handleToggleDeleteColumnModal = (columnId: string) => {
+    dispatch(
+      taskBoardReducerActions.toggleModal({
+        isOpen: true,
+        columnId,
+      })
+    )
+  }
+
   return (
     <Draggable draggableId={id} index={index}>
       {(provided) => (
@@ -35,6 +44,7 @@ const Column = ({ column: { title, id }, tasks, index }: ColumnProps) => {
             dragHandleProps={provided.dragHandleProps}
             title={title}
             handlePlusClick={handlePlusClick}
+            handleToggleDeleteColumnModal={handleToggleDeleteColumnModal}
           />
           {showInput && <ColumnInput id={id} handleClose={handleCancelClick} />}
           {/* TODO: switch done and active */}

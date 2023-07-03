@@ -7,11 +7,17 @@ type ToastTypeUnion = 'success' | 'error' | 'info'
 type ShowToastify = {
   type?: ToastTypeUnion
   title: string
-  message: string
+  message: string | JSX.Element
   options?: ToastOptions
 }
 
-const renderToastContent = ({ title, message }: { title?: string; message: string }) => (
+const renderToastContent = ({
+  title,
+  message,
+}: {
+  title?: ShowToastify['title']
+  message: ShowToastify['message']
+}) => (
   <div>
     {title && <strong>{title}</strong>}
     <br />
