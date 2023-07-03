@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
-import taskBoardRoutes from "./routes/taskBoardRoutes";
+import boardRoutes from "./routes/boardRoutes";
 import taskColumnRoutes from "./routes/taskColumnRoutes";
 import taskRoutes from "./routes/taskRoutes";
 import { initializeDB } from "./db";
@@ -26,7 +26,7 @@ initializeDB().catch((err) => {
 app.use("/api/auth", authRoutes);
 
 // TaskBoard routes
-app.use("/api/task-board", taskBoardRoutes);
+app.use("/api/task-board", boardRoutes);
 
 // TaskBoard routes
 app.use("/api/columns", taskColumnRoutes);
