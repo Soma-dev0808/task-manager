@@ -9,7 +9,8 @@ const getOptions = () => {
     Object.assign(options, {
       url: process.env.DATABASE_URL,
       entities: ["dist/models/*.js"],
-      synchronize: false,
+      // synchronize: false, // better to set false in prod mode
+      synchronize: true,
     });
   } else {
     Object.assign(options, {
