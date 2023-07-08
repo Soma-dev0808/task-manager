@@ -1,6 +1,18 @@
 # task-manager
 
+### Live Demo
+
+https://task-manager-red-tau.vercel.app/
+
+Test Account
+
+```
+username: test
+password: test1234
+```
+
 ### Frontend
+
 - react.js
 - typescript
 - redux-toolkit
@@ -10,13 +22,13 @@
 - vite
 
 ### Backend
+
 - Node.js
 - Typescript
 - Express.js
 - typeorm
 - Postgresql
-- openapi swagger 
-
+- openapi swagger
 
 ### Entity Relationship Diagram
 
