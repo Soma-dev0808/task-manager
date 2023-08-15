@@ -7,7 +7,7 @@ const SelectTaskBoardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
 `
 
 const AddTaskBoardWrapper = styled.div`
@@ -18,16 +18,30 @@ const AddTaskBoardWrapper = styled.div`
 const BoardNameList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 30%;
+  width: 90%;
+  max-width: 400px;
+  max-height: 70%;
+  overflow-y: scroll;
+  border-radius: 5px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `
 
 const BoardNameWrapper = styled.div`
   display: flex;
-  gap: 10px;
+  border-bottom: solid 1px #fff;
+  padding: 20px 10px;
+  &:nth-child(odd) {
+    background-color: ${({ theme }) => theme.colors.secondaryBlack};
+  }
+  &:last-child {
+    border-bottom: none;
+  }
 `
 const BoardName = styled.div`
   flex-grow: 1;
+  font-weight: bold;
 `
 
 const StyledLink = styled(Link)`
