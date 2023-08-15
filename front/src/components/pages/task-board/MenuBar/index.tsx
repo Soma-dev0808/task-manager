@@ -76,6 +76,7 @@ const useFindUser = () => {
 
 export const MenuBar = () => {
   const [columnName, setColumnName] = useState('')
+  const [isAddUserButtonClicked, setIsAddUserButtonClicked] = useState(false)
   const { userName, setUserName, foundUsers } = useFindUser()
   const isEmpty = useMemo(() => columnName === '', [columnName])
   const dispatch = useAppDispatch()
@@ -103,6 +104,7 @@ export const MenuBar = () => {
     })
   }, [columnName, dispatch, getToken, boardId, isEmpty, showToast])
 
+  console.log(isAddUserButtonClicked)
   return (
     <MenuBarContainer>
       <Menu>
@@ -121,17 +123,25 @@ export const MenuBar = () => {
           </ColumnInputContainer>
         </div>
 
-        <div>
-          Find User:
-          <UserSearchInputContainer>
-            <InputField value={userName} onChange={(e) => setUserName(e.target.value)} />
-            <UserList>
-              {foundUsers.map((user) => (
-                <UserItem key={user.userId}>{user.userName}</UserItem>
-              ))}
-            </UserList>
-          </UserSearchInputContainer>
-        </div>
+        <button onClick={() => setIsAddUserButtonClicked(!isAddUserButtonClicked)}>
+          Add user to taskboard
+        </button>
+        {isAddUserButtonClicked && (
+          <div>
+            <UserSearchInputContainer>
+              <InputField
+                placeholder="Search User"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+              />
+              <UserList>
+                {foundUsers.map((user) => (
+                  <UserItem key={user.userId}>{user.userName}</UserItem>
+                ))}
+              </UserList>
+            </UserSearchInputContainer>
+          </div>
+        )}
       </Menu>
     </MenuBarContainer>
   )
