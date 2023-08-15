@@ -7,6 +7,7 @@ const MenuBarContainer = styled.div`
   width: 100%;
   height: 80px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.baseBoarder};
+  z-index: 99;
 `
 
 const Menu = styled.div`
@@ -16,6 +17,7 @@ const Menu = styled.div`
   height: 100%;
   padding: 10px 20px;
   box-sizing: border-box;
+  gap: 20px;
 `
 
 const ColumnInputContainer = styled.div`
@@ -23,4 +25,37 @@ const ColumnInputContainer = styled.div`
   gap: 10px;
 `
 
-export { MenuBarContainer, Menu, ColumnInputContainer }
+const UserSearchInputContainer = styled.div`
+  position: relative;
+`
+
+const InputField = styled.input`
+  height: 30px;
+  border-radius: 5px;
+  outline: none;
+`
+
+const UserList = styled.div`
+  position: absolute;
+  top: 35px;
+  left: 0;
+  width: 100%;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.colors.secondBaseBlack};
+`
+
+const UserItem = styled.div`
+  padding: 8px 5px;
+`
+
+export {
+  MenuBarContainer,
+  Menu,
+  ColumnInputContainer,
+  UserSearchInputContainer,
+  InputField,
+  UserList,
+  UserItem,
+}
