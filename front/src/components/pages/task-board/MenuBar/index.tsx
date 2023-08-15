@@ -104,7 +104,6 @@ export const MenuBar = () => {
     })
   }, [columnName, dispatch, getToken, boardId, isEmpty, showToast])
 
-  console.log(isAddUserButtonClicked)
   return (
     <MenuBarContainer>
       <Menu>
@@ -136,7 +135,10 @@ export const MenuBar = () => {
               />
               <UserList>
                 {foundUsers.map((user) => (
-                  <UserItem key={user.userId}>{user.userName}</UserItem>
+                  <UserItem key={user.userId}>
+                    {user.userName}
+                    <button onClick={() => console.log(user.userName)}>add</button>
+                  </UserItem>
                 ))}
               </UserList>
             </UserSearchInputContainer>
