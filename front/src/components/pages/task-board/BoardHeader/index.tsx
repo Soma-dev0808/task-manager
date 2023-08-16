@@ -1,9 +1,10 @@
-import { Header, HeaderContainer, Title } from './Style'
+import { Header } from '@/components/ui/Header'
+import { LogoutButton } from '@/components/ui/LogoutButton'
+import { Title } from './Style'
 
 export const BoardHeader = ({ taskBoardName }: { taskBoardName: string | undefined }) => (
-  <HeaderContainer>
-    <Header>
-      <Title>{taskBoardName}</Title>
-    </Header>
-  </HeaderContainer>
+  <Header>
+    <Title>{taskBoardName}</Title>
+    <LogoutButton />
+  </Header>
 )

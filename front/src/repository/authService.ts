@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { localStorageKeys } from '@/const/localStorageKeys'
 
 const postRegistration = async (emailAddress: string, userName: string, password: string) => {
   // TODO: Add middleware.
@@ -24,8 +25,8 @@ const postRegistration = async (emailAddress: string, userName: string, password
   }
 
   const { token } = await res.data
-  // TODO: improve security
-  localStorage.setItem('token', token)
+  // TODO: improve security cookie?
+  localStorage.setItem(localStorageKeys.authToken, token)
 
   return res
 }
@@ -53,7 +54,7 @@ const postLogin = async (userName: string, password: string) => {
 
   const { token } = await res.data
   // TODO: improve security
-  localStorage.setItem('token', token)
+  localStorage.setItem(localStorageKeys.authToken, token)
 
   return res
 }
