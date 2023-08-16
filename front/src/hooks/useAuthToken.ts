@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
+import { localStorageKeys } from '@/const/localStorageKeys'
 import { routePath } from '@/routes'
 
 export const useAuthToken = () => {
@@ -8,7 +9,7 @@ export const useAuthToken = () => {
   const navigate = useNavigate()
 
   const getToken = useCallback(() => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem(localStorageKeys.authToken)
     if (token === null) {
       showToast({
         type: 'error',
