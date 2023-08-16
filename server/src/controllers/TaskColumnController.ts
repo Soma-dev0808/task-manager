@@ -48,6 +48,7 @@ export const getTaskColumns = async (req: Request, res: Response) => {
   try {
     const taskBoard = await AppDataSource.manager.findOne(TaskBoard, {
       where: { board_id: parsedBoardId },
+      relations: ["user_boards", "user_boards.user"],
     });
 
     const taskColumns = await AppDataSource.manager.find(TaskColumn, {

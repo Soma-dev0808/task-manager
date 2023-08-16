@@ -4,6 +4,37 @@ import { User } from "../models/User";
 import { TaskBoard } from "../models/TaskBoard";
 import { UserBoard } from "../models/UserBoard";
 
+export const addUserToBoard = async (req: Request, res: Response) => {
+  const { user_id, board_id } = req.body;
+
+  try {
+    const user = await AppDataSource.manager.findOne(User, {
+      where: {
+        user_id,
+      },
+    });
+    const taskBoard = await AppDataSource.manager.findOne(TaskBoard, {
+      where: {
+        board_id,
+      },
+    });
+
+    if (!user || !taskBoard) {
+      return res.status(400).json({ message: "User or TaskBoard not found!" });
+    }
+
+    const newUserBoard = new UserBoard();
+    newUserBoard.user = user;
+    newUserBoard.task_board = taskBoard;
+
+    await AppDataSource.manager.save(newUserBoard);
+
+    res.status(201).json({ message: "User added to board successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
 export const createBoard = async (req: Request, res: Response) => {
   const { board_name } = req.body;
   const user_id = req.user.user_id;

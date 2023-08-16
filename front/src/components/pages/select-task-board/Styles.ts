@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+const Title = styled.h1`
+  font-size: 2rem;
+`
+
 const SelectTaskBoardWrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 30px;
+  margin-top: 120px;
 `
 
 const AddTaskBoardWrapper = styled.div`
@@ -49,6 +54,7 @@ const StyledLink = styled(Link)`
 `
 
 export {
+  Title,
   SelectTaskBoardWrapper,
   AddTaskBoardWrapper,
   BoardNameList,
