@@ -36,6 +36,7 @@ type TaskDataType = {
 
 type TaskBoardDataType = {
   taskBoardName: string | undefined
+  usersInTaskBoard: number[]
   taskBoardData: TaskDataType
   isLoading: boolean
   error?: string
@@ -64,10 +65,21 @@ type APITaskDataType = {
   }[]
 }
 
+type UserInTaskBoardType = {
+  email_addres: string
+  user_id: number
+  user_name: string
+}
+type UserInTaskBoardObjectType = {
+  user: UserInTaskBoardType
+  user_board_id: number
+}
+
 // TODO: Add type file for backend response
 type APITaskBoardDataType = {
   board_id: number
   board_name: string
+  user_boards: UserInTaskBoardObjectType[]
 }
 
 export type {
@@ -79,4 +91,6 @@ export type {
   TaskBoardDataType,
   APITaskDataType,
   APITaskBoardDataType,
+  UserInTaskBoardObjectType,
+  UserInTaskBoardType,
 }

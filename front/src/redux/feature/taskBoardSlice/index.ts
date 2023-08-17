@@ -9,11 +9,13 @@ import type {
   TaskBoardDataType,
   APITaskDataType,
   APITaskBoardDataType,
+  UserInTaskBoardObjectType,
 } from './type'
 import { RootState } from '../../app/configureStore'
 
 const initialTaskBoardData: TaskBoardDataType = {
   taskBoardName: undefined,
+  usersInTaskBoard: [],
   taskBoardData: {
     tasks: {},
     columns: {},
@@ -68,14 +70,30 @@ const modifyFetchedData = (data: APITaskDataType[]): TaskDataType => {
   return taskBoardData
 }
 
+const ModifyUserBoardData = (data: UserInTaskBoardObjectType[]) => {
+  const modifiedData = data.map((data) => {
+    return data.user
+  })
+  const modifedArray = modifiedData.map((data) => {
+    return data.user_id
+  })
+
+  return modifedArray
+}
+
 const fetchTaskData = createAsyncThunk<
-  { taskBoardData: TaskDataType; taskBoardName: string | undefined },
+  {
+    taskBoardData: TaskDataType
+    taskBoardName: string | undefined
+    usersInTaskBoard: number[]
+  },
   {
     boardId: string
     token: string
   }
 >('taskBoard/fetchTaskData', async ({ boardId, token }) => {
   const res = await backend.board.fetchTaskBoardData(token, boardId)
+  console.log(res.data.taskBoard.user_boards)
 
   // TODO: Add error handling
   if (res.status !== 200) {
@@ -87,7 +105,11 @@ const fetchTaskData = createAsyncThunk<
 
   const taskColumns = res.data.taskColumns as APITaskDataType[]
   const taskBoardName = res.data.taskBoard as APITaskBoardDataType
-  return { taskBoardData: modifyFetchedData(taskColumns), taskBoardName: taskBoardName.board_name }
+  return {
+    taskBoardData: modifyFetchedData(taskColumns),
+    taskBoardName: taskBoardName.board_name,
+    usersInTaskBoard: ModifyUserBoardData(taskBoardName.user_boards),
+  }
 })
 
 const createTask = createAsyncThunk<
@@ -328,6 +350,7 @@ export const taskBoardSlice = createSlice({
         state.isLoading = false
         state.taskBoardData = action.payload.taskBoardData
         state.taskBoardName = action.payload.taskBoardName
+        state.usersInTaskBoard = action.payload.usersInTaskBoard
       })
       .addCase(fetchTaskData.rejected, (state, action) => {
         state.isLoading = false
