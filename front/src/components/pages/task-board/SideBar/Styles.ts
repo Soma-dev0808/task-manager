@@ -15,6 +15,7 @@ const Container = styled.div<ContainerProps>`
   background-color: ${({ theme }) => theme.colors.baseBlack};
   border-left: 1px solid ${({ theme }) => theme.colors.baseBoarder};
   overflow-y: scroll;
+  z-index: 100;
   // TODO:fix here
   @media (max-width: 600px) {
     width: 100%;
