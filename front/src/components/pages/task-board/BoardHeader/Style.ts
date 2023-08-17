@@ -16,7 +16,7 @@ const UserNumber = styled.div`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: rgba(255, 0, 0, 0.697);
+  background-color: ${({ theme }) => `${theme.colors.secondary}`};
   color: white;
   display: flex;
   justify-content: center;

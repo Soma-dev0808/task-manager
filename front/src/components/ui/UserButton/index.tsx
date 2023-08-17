@@ -1,6 +1,5 @@
 import { UserButtonDiv, UserNumber } from '@/components/pages/task-board/BoardHeader/Style'
 import { useAppSelector } from '@/redux/app/hook'
-import { IconButton } from '../Button'
 import { UserIcon } from '../Icons/UserIcon'
 
 export const UserButton = () => {
@@ -8,9 +7,7 @@ export const UserButton = () => {
 
   return (
     <UserButtonDiv>
-      <IconButton>
-        <UserIcon />
-      </IconButton>
+      <UserIcon />
       <UserNumber>{usersBoard.length}</UserNumber>
     </UserButtonDiv>
   )
