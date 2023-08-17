@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoutes";
 import boardRoutes from "./routes/boardRoutes";
 import taskColumnRoutes from "./routes/taskColumnRoutes";
 import taskRoutes from "./routes/taskRoutes";
+import userRoutes from "./routes/userRoutes";
 import { initializeDB } from "./db";
 import swaggerDocs from "./utils/swagger";
 
@@ -33,6 +34,9 @@ app.use("/api/columns", taskColumnRoutes);
 
 // Task routes
 app.use("/api/tasks", taskRoutes);
+
+// User routes
+app.use("/api/users", userRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

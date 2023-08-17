@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { IconButton } from '@/components/ui/Button'
 import { PlusIcon } from '@/components/ui/Icons/PlusIcon'
@@ -6,10 +6,77 @@ import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
 import { useAuthToken } from '@/hooks/useAuthToken'
 import { useAppDispatch } from '@/redux/app/hook'
 import { taskBoardReducerActions } from '@/redux/feature/taskBoardSlice'
-import { Menu, MenuBarContainer, ColumnInputContainer } from './Styles'
+import { backend } from '@/repository'
+import {
+  Menu,
+  MenuBarContainer,
+  ColumnInputContainer,
+  InputField,
+  UserList,
+  UserItem,
+  UserSearchInputContainer,
+} from './Styles'
+
+// TODO: Add generic type, and move it somewhere global.
+const useDebounce = (value: string, delay = 500) => {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+  const ref = useRef<undefined | number>()
+
+  useEffect(() => {
+    ref.current = window.setTimeout(() => setDebouncedValue(value), delay)
+
+    return () => {
+      if (ref.current !== undefined) {
+        window.clearTimeout(ref.current)
+      }
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
+// TODO: Move it to hooks folder
+const useFindUser = () => {
+  const [userName, setUserName] = useState('')
+  const [foundUsers, setFoundUsers] = useState<
+    {
+      emailAddress: string
+      password: string
+      userId: number
+      userName: string
+    }[]
+  >([])
+  const { getToken } = useAuthToken()
+  const userSearchKeyword = useDebounce(userName)
+
+  useEffect(() => {
+    const token = getToken()
+    if (!token) return
+    backend.users.fetchUserByKeyword(token, userSearchKeyword).then((res) => {
+      setFoundUsers(
+        res.data.map(
+          (user: {
+            email_address: string
+            password: string
+            user_id: number
+            user_name: string
+          }) => ({
+            emailAddress: user.email_address,
+            password: user.password,
+            userId: user.user_id,
+            userName: user.user_name,
+          })
+        )
+      )
+    })
+  }, [userSearchKeyword, getToken])
+
+  return { userName, setUserName, foundUsers }
+}
 
 export const MenuBar = () => {
   const [columnName, setColumnName] = useState('')
+  const { userName, setUserName, foundUsers } = useFindUser()
   const isEmpty = useMemo(() => columnName === '', [columnName])
   const dispatch = useAppDispatch()
   const { getToken } = useAuthToken()
@@ -42,7 +109,7 @@ export const MenuBar = () => {
         <div>
           Add Column:
           <ColumnInputContainer>
-            <input value={columnName} onChange={(e) => setColumnName(e.target.value)} />
+            <InputField value={columnName} onChange={(e) => setColumnName(e.target.value)} />
             <IconButton
               type="button"
               buttonColor="primary"
@@ -52,6 +119,18 @@ export const MenuBar = () => {
               <PlusIcon />
             </IconButton>
           </ColumnInputContainer>
+        </div>
+
+        <div>
+          Find User:
+          <UserSearchInputContainer>
+            <InputField value={userName} onChange={(e) => setUserName(e.target.value)} />
+            <UserList>
+              {foundUsers.map((user) => (
+                <UserItem key={user.userId}>{user.userName}</UserItem>
+              ))}
+            </UserList>
+          </UserSearchInputContainer>
         </div>
       </Menu>
     </MenuBarContainer>
