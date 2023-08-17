@@ -1,7 +1,11 @@
 import { Draggable } from 'react-beautiful-dnd'
 
+import { nonNullable } from '@/libs/typeGuards'
 import { TaskType } from '@/redux/feature/taskBoardSlice'
-import { Container } from './Styles'
+import { Container, Estimate, TaskBriefDetail, TaskId, TaskTitle, TitleContainer } from './Styles'
+
+const getId = (taskId: string): string =>
+  nonNullable(taskId.split('-').at(1)) ? taskId.split('-')[1] : taskId
 
 const Task = ({
   task,
@@ -21,7 +25,18 @@ const Task = ({
         isDragging={snapshot.isDragging}
         onClick={() => onClick(task.id)}
       >
-        {task.title}
+        <TitleContainer>
+          <TaskId>
+            <span>#{getId(task.id)}</span>
+          </TaskId>
+          <TaskTitle>{task.title}</TaskTitle>
+        </TitleContainer>
+
+        {nonNullable(task.estimate) && (
+          <TaskBriefDetail>
+            <Estimate>{task.estimate}</Estimate>
+          </TaskBriefDetail>
+        )}
       </Container>
     )}
   </Draggable>
