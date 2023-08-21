@@ -66,12 +66,20 @@ type APITaskDataType = {
 }
 
 type UserInTaskBoardType = {
+  emailAddress: string
+  password: string
+  userId: number
+  userName: string
+}
+
+type APIUserInTaskBoardType = {
   email_addres: string
   user_id: number
   user_name: string
 }
+
 type UserInTaskBoardObjectType = {
-  user: UserInTaskBoardType
+  user: APIUserInTaskBoardType
   user_board_id: number
 }
 
@@ -92,5 +100,6 @@ export type {
   APITaskDataType,
   APITaskBoardDataType,
   UserInTaskBoardObjectType,
+  APIUserInTaskBoardType,
   UserInTaskBoardType,
 }

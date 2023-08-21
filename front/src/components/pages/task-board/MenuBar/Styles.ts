@@ -64,12 +64,12 @@ const ExplanationForAddUser = styled.div`
 const CloseButton = styled.button`
   font-size: 17px;
   padding: 0 3px;
-  color: white;
+  color: ${({ theme }) => theme.colors.baseWhite};
 `
 
 const AddUserInput = styled.input`
   background-color: ${({ theme }) => theme.colors.secondBaseBlack};
-  color: white;
+  color: ${({ theme }) => theme.colors.baseWhite};
   width: 230px;
   height: 30px;
   outline: none;
@@ -100,7 +100,7 @@ const UserList = styled.div`
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: #5e5b5bab;
+    background-color: ${({ theme }) => theme.colors.darkGrey};
     border-radius: 10px;
   }
 
@@ -116,12 +116,12 @@ const AddButton = styled.button`
   padding: 4px 8px;
 
   &:hover {
-    background-color: #5e5b5bab;
+    background-color: ${({ theme }) => theme.colors.darkGrey};
   }
 
   &:disabled {
     cursor: auto;
-    background-color: #5e5b5bab;
+    background-color: ${({ theme }) => theme.colors.darkGrey};
     border: none;
 
     &:hover {
@@ -140,12 +140,12 @@ const UserItem = styled.div`
   transition: all 0.1s ease-in-out;
 
   &:hover {
-    background-color: #5e5b5bab;
+    background-color: ${({ theme }) => theme.colors.darkGrey};
     cursor: pointer;
   }
 
   &:hover ${AddButton} {
-    background-color: #5e5b5bab;
+    background-color: ${({ theme }) => theme.colors.darkGrey};
   }
 
   &:last-child {
@@ -154,7 +154,7 @@ const UserItem = styled.div`
 `
 
 const DisabledUserItem = styled(UserItem)`
-  background-color: #5e5b5bab;
+  background-color: ${({ theme }) => theme.colors.darkGrey};
 
   &:hover {
     cursor: default;

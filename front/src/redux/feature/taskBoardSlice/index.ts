@@ -70,16 +70,8 @@ const modifyFetchedData = (data: APITaskDataType[]): TaskDataType => {
   return taskBoardData
 }
 
-const ModifyUserBoardData = (data: UserInTaskBoardObjectType[]) => {
-  const modifiedData = data.map((data) => {
-    return data.user
-  })
-  const modifedArray = modifiedData.map((data) => {
-    return data.user_id
-  })
-
-  return modifedArray
-}
+const ModifyUserBoardData = (data: UserInTaskBoardObjectType[]) =>
+  data.map((data) => data.user.user_id)
 
 const fetchTaskData = createAsyncThunk<
   {
@@ -93,7 +85,6 @@ const fetchTaskData = createAsyncThunk<
   }
 >('taskBoard/fetchTaskData', async ({ boardId, token }) => {
   const res = await backend.board.fetchTaskBoardData(token, boardId)
-  console.log(res.data.taskBoard.user_boards)
 
   // TODO: Add error handling
   if (res.status !== 200) {

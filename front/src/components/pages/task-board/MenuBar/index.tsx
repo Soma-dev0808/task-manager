@@ -3,9 +3,11 @@ import { useParams } from 'react-router-dom'
 import { IconButton } from '@/components/ui/Button'
 import { PlusIcon } from '@/components/ui/Icons/PlusIcon'
 import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
+import UsersList from '@/components/ui/UsersList'
 import { useAuthToken } from '@/hooks/useAuthToken'
 import { useAppDispatch, useAppSelector } from '@/redux/app/hook'
 import { taskBoardReducerActions } from '@/redux/feature/taskBoardSlice'
+import { UserInTaskBoardType } from '@/redux/feature/taskBoardSlice/type'
 import { backend } from '@/repository'
 import { postAddedUser } from '@/repository/addUserService'
 import {
@@ -48,14 +50,7 @@ const useDebounce = (value: string, delay = 500) => {
 // TODO: Move it to hooks folder
 const useFindUser = () => {
   const [userName, setUserName] = useState('')
-  const [foundUsers, setFoundUsers] = useState<
-    {
-      emailAddress: string
-      password: string
-      userId: number
-      userName: string
-    }[]
-  >([])
+  const [foundUsers, setFoundUsers] = useState<UserInTaskBoardType[]>([])
   const { getToken } = useAuthToken()
   const userSearchKeyword = useDebounce(userName)
 
@@ -169,23 +164,7 @@ export const MenuBar = () => {
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                 />
-                <UserList>
-                  {foundUsers.map((user) => {
-                    const isDisabled = usersBoard.includes(user.userId)
-                    const ItemComponent = isDisabled ? DisabledUserItem : UserItem
-                    return (
-                      <ItemComponent key={user.userId}>
-                        {user.userName}
-                        <AddButton
-                          disabled={usersBoard.includes(user.userId)}
-                          onClick={() => handleAddButtonClick(user.userId.toString())}
-                        >
-                          {usersBoard.includes(user.userId) ? 'added' : 'add'}
-                        </AddButton>
-                      </ItemComponent>
-                    )
-                  })}
-                </UserList>
+                <UsersList foundUsers={foundUsers} onClick={handleAddButtonClick} />
               </UserSearchInputContainer>
             </SearchContainer>
           )}

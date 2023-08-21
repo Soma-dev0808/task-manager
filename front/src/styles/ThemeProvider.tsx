@@ -3,6 +3,7 @@ import { ThemeProvider } from 'styled-components'
 
 const colorPallet = {
   baseBlack: '#242424',
+  baseWhite: 'white',
   secondaryBlack: '#313131',
   danger: '#ff5252',
   scaleBlue40: '#4660F9',
@@ -14,6 +15,7 @@ const colorPallet = {
   scaleGreen80: '#0E6E51',
   scaleGrey40: '#6E7681',
   scaleGrey50: '#484F58',
+  scaleGrey55: '#5e5b5bab',
   scaleGrey60: '#30363D',
   scaleGrey70: '#21262D',
   scaleGrey80: '#161B22',
@@ -22,6 +24,7 @@ const colorPallet = {
 const theme = {
   colors: {
     baseBlack: colorPallet.baseBlack,
+    baseWhite: colorPallet.baseWhite,
     secondaryBlack: colorPallet.secondaryBlack,
     baseBlackFocus: colorPallet.scaleGrey80,
     baseBoarder: colorPallet.scaleGrey50,
@@ -31,6 +34,7 @@ const theme = {
     default: colorPallet.scaleGrey50,
     danger: colorPallet.danger,
     secondBaseBlack: colorPallet.scaleGrey80,
+    darkGrey: colorPallet.scaleGrey55,
   },
   fonts: ['sans-serif', 'Roboto'],
   fontSizes: {
