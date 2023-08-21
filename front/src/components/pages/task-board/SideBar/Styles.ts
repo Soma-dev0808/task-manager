@@ -86,6 +86,11 @@ const TextArea = styled.textarea`
   resize: none;
   margin-right: 16px;
   padding: 8px;
+
+  &:read-only {
+    background-color: grey;
+  }
+
   @media (max-width: 540px) {
     margin-right: 0px;
   }
@@ -97,6 +102,11 @@ const DetailContainer = styled.div`
   @media (max-width: 540px) {
     flex-direction: column;
   }
+`
+
+const DescriptionDiv = styled.div`
+  display: flex;
+  flex-direction: column;
 `
 
 const SubDetailsArea = styled.div`
@@ -143,4 +153,5 @@ export {
   SpanLabel,
   SpanDetail,
   Input,
+  DescriptionDiv,
 }

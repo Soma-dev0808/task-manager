@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Title = styled.h1`
@@ -49,10 +48,6 @@ const BoardName = styled.div`
   font-weight: bold;
 `
 
-const StyledLink = styled(Link)`
-  color: white;
-`
-
 export {
   Title,
   SelectTaskBoardWrapper,
@@ -60,5 +55,4 @@ export {
   BoardNameList,
   BoardNameWrapper,
   BoardName,
-  StyledLink,
 }

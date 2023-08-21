@@ -2,6 +2,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 
 import { Button } from '@/components/ui/Button'
 import { Modal, ModalButtonContainer, ModalDescription, ModalTitle } from '@/components/ui/Modal'
+import BoardFooter from './BoardFooter'
 import { BoardHeader } from './BoardHeader'
 import Column from './Column'
 import { useTaskBoard } from './hooks/useTaskBoard'
@@ -59,6 +60,7 @@ const TaskBoard = () => {
           </Button>
         </ModalButtonContainer>
       </Modal>
+      <BoardFooter />
     </>
   )
 }

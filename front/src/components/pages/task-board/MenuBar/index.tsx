@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { IconButton } from '@/components/ui/Button'
 import { PlusIcon } from '@/components/ui/Icons/PlusIcon'
+import { PlusButton } from '@/components/ui/PlusButton'
 import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
 import { useAuthToken } from '@/hooks/useAuthToken'
 import { useAppDispatch } from '@/redux/app/hook'
@@ -110,14 +111,7 @@ export const MenuBar = () => {
           Add Column:
           <ColumnInputContainer>
             <InputField value={columnName} onChange={(e) => setColumnName(e.target.value)} />
-            <IconButton
-              type="button"
-              buttonColor="primary"
-              disabled={isEmpty}
-              onClick={handleCreateColumn}
-            >
-              <PlusIcon />
-            </IconButton>
+            <PlusButton isEmpty={isEmpty} onClick={handleCreateColumn} />
           </ColumnInputContainer>
         </div>
 
