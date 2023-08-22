@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { IconButton } from '@/components/ui/Button'
-import { PlusIcon } from '@/components/ui/Icons/PlusIcon'
 import { PlusButton } from '@/components/ui/PlusButton'
 import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
 import UsersList from '@/components/ui/UsersList'
