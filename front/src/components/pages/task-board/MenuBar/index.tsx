@@ -3,19 +3,27 @@ import { useParams } from 'react-router-dom'
 import { IconButton } from '@/components/ui/Button'
 import { PlusIcon } from '@/components/ui/Icons/PlusIcon'
 import { useShowToast } from '@/components/ui/Toast/hooks/useShowToast'
+import UsersList from '@/components/ui/UsersList'
 import { useAuthToken } from '@/hooks/useAuthToken'
 import { useAppDispatch } from '@/redux/app/hook'
 import { taskBoardReducerActions } from '@/redux/feature/taskBoardSlice'
+import { UserInTaskBoardType } from '@/redux/feature/taskBoardSlice/type'
 import { backend } from '@/repository'
+import { postAddedUser } from '@/repository/addUserService'
 import {
   Menu,
   MenuBarContainer,
   ColumnInputContainer,
   InputField,
-  UserList,
-  UserItem,
   UserSearchInputContainer,
+  UserSearchContainer,
+  AddUserButton,
+  ExplanationForAddUser,
+  SearchContainer,
+  CloseButton,
+  AddUserInput,
 } from './Styles'
+import { useFetchTaskData } from '../hooks/useFetchTaskData'
 
 // TODO: Add generic type, and move it somewhere global.
 const useDebounce = (value: string, delay = 500) => {
@@ -38,14 +46,7 @@ const useDebounce = (value: string, delay = 500) => {
 // TODO: Move it to hooks folder
 const useFindUser = () => {
   const [userName, setUserName] = useState('')
-  const [foundUsers, setFoundUsers] = useState<
-    {
-      emailAddress: string
-      password: string
-      userId: number
-      userName: string
-    }[]
-  >([])
+  const [foundUsers, setFoundUsers] = useState<UserInTaskBoardType[]>([])
   const { getToken } = useAuthToken()
   const userSearchKeyword = useDebounce(userName)
 
@@ -76,12 +77,15 @@ const useFindUser = () => {
 
 export const MenuBar = () => {
   const [columnName, setColumnName] = useState('')
+  const [isAddUserButtonClicked, setIsAddUserButtonClicked] = useState(false)
   const { userName, setUserName, foundUsers } = useFindUser()
   const isEmpty = useMemo(() => columnName === '', [columnName])
   const dispatch = useAppDispatch()
   const { getToken } = useAuthToken()
   const { boardId } = useParams()
   const { showToast } = useShowToast()
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const { fetchTaskData } = useFetchTaskData()
 
   const handleCreateColumn = useCallback(async () => {
     const token = getToken()
@@ -103,6 +107,24 @@ export const MenuBar = () => {
     })
   }, [columnName, dispatch, getToken, boardId, isEmpty, showToast])
 
+  const handleAddUserClick = () => {
+    setIsAddUserButtonClicked(!isAddUserButtonClicked)
+  }
+
+  const handleAddButtonClick = async (userId: string) => {
+    const token = getToken()
+    if (token && boardId) {
+      await postAddedUser(token, boardId, userId)
+      fetchTaskData(boardId, token)
+    }
+  }
+
+  useEffect(() => {
+    if (isAddUserButtonClicked && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isAddUserButtonClicked])
+
   return (
     <MenuBarContainer>
       <Menu>
@@ -121,17 +143,27 @@ export const MenuBar = () => {
           </ColumnInputContainer>
         </div>
 
-        <div>
-          Find User:
-          <UserSearchInputContainer>
-            <InputField value={userName} onChange={(e) => setUserName(e.target.value)} />
-            <UserList>
-              {foundUsers.map((user) => (
-                <UserItem key={user.userId}>{user.userName}</UserItem>
-              ))}
-            </UserList>
-          </UserSearchInputContainer>
-        </div>
+        <UserSearchContainer>
+          <AddUserButton onClick={handleAddUserClick}>Add User</AddUserButton>
+
+          {isAddUserButtonClicked && (
+            <SearchContainer>
+              <ExplanationForAddUser>
+                Search user & add to taskboard
+                <CloseButton onClick={() => setIsAddUserButtonClicked(false)}>✖️</CloseButton>
+              </ExplanationForAddUser>
+              <UserSearchInputContainer>
+                <AddUserInput
+                  ref={inputRef}
+                  placeholder="Search User"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                />
+                <UsersList foundUsers={foundUsers} onClick={handleAddButtonClick} />
+              </UserSearchInputContainer>
+            </SearchContainer>
+          )}
+        </UserSearchContainer>
       </Menu>
     </MenuBarContainer>
   )
