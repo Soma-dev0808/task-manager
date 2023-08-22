@@ -9,11 +9,13 @@ import type {
   TaskBoardDataType,
   APITaskDataType,
   APITaskBoardDataType,
+  UserInTaskBoardObjectType,
 } from './type'
 import { RootState } from '../../app/configureStore'
 
 const initialTaskBoardData: TaskBoardDataType = {
   taskBoardName: undefined,
+  usersInTaskBoard: [],
   taskBoardData: {
     tasks: {},
     columns: {},
@@ -31,6 +33,9 @@ const initialTaskBoardData: TaskBoardDataType = {
     columnId: undefined,
   },
 }
+
+const ModifyUserBoardData = (data: UserInTaskBoardObjectType[]) =>
+  data.map((data) => data.user.user_id)
 
 const sortOrder = <T extends { order: number | null }, U extends { order: number | null }>(
   a: T,
@@ -69,7 +74,11 @@ const modifyFetchedData = (data: APITaskDataType[]): TaskDataType => {
 }
 
 const fetchTaskData = createAsyncThunk<
-  { taskBoardData: TaskDataType; taskBoardName: string | undefined },
+  {
+    taskBoardData: TaskDataType
+    taskBoardName: string | undefined
+    usersInTaskBoard: number[]
+  },
   {
     boardId: string
     token: string
@@ -87,7 +96,11 @@ const fetchTaskData = createAsyncThunk<
 
   const taskColumns = res.data.taskColumns as APITaskDataType[]
   const taskBoardName = res.data.taskBoard as APITaskBoardDataType
-  return { taskBoardData: modifyFetchedData(taskColumns), taskBoardName: taskBoardName.board_name }
+  return {
+    taskBoardData: modifyFetchedData(taskColumns),
+    taskBoardName: taskBoardName.board_name,
+    usersInTaskBoard: ModifyUserBoardData(taskBoardName.user_boards),
+  }
 })
 
 const createTask = createAsyncThunk<
@@ -328,6 +341,7 @@ export const taskBoardSlice = createSlice({
         state.isLoading = false
         state.taskBoardData = action.payload.taskBoardData
         state.taskBoardName = action.payload.taskBoardName
+        state.usersInTaskBoard = action.payload.usersInTaskBoard
       })
       .addCase(fetchTaskData.rejected, (state, action) => {
         state.isLoading = false
