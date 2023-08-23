@@ -16,6 +16,7 @@ import {
   SpanDetail,
   ButtonContainer,
   DeleteButton,
+  DescriptionDiv,
 } from './Styles'
 import { useSidebar } from '../hooks/useSideBar'
 
@@ -67,15 +68,18 @@ export const Sidebar = () => {
       </TitleContainer>
 
       <DetailContainer>
-        <TextArea
-          name="content"
-          readOnly={!isEditable}
-          value={taskInfo?.content}
-          id=""
-          cols={40}
-          rows={20}
-          onChange={handleEditContent}
-        />
+        <DescriptionDiv>
+          <SpanLabel>Description</SpanLabel>
+          <TextArea
+            name="content"
+            readOnly={!isEditable}
+            value={taskInfo?.content}
+            id=""
+            cols={40}
+            rows={20}
+            onChange={handleEditContent}
+          />
+        </DescriptionDiv>
 
         <SubDetailsArea>
           <SubDetailContainer>

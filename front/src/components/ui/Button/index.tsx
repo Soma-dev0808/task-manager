@@ -8,6 +8,10 @@ const Button = styled.button<{ buttonColor?: ColorsType }>`
   align-items: center;
   background-color: ${({ buttonColor, theme }) =>
     buttonColor ? theme.colors[buttonColor] : theme.colors.primary};
+  transition: all 0.1s ease-in-out;
+  &:hover {
+    background-color: #ffffff94;
+  }
 `
 
 const IconButton = styled.button<{ buttonColor?: ColorsType }>`
